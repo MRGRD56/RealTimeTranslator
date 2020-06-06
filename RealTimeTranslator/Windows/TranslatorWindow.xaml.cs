@@ -22,6 +22,7 @@ using Emgu.CV.OCR;
 using Emgu.CV.Structure;
 using Emgu.Util;
 using RealTimeTranslator.Windows;
+using Emgu.CV.CvEnum;
 
 namespace RealTimeTranslator
 {
@@ -31,9 +32,6 @@ namespace RealTimeTranslator
 	public partial class TranslatorWindow : Window
 	{
 		private MainWindow MW { get; }
-		public string Lang { get; set; } = "eng";
-		private const string ImgPath = @"C:\RTT_Data\Temp\img.jpg";
-		public const string TrainedDataFolderPath = @"C:\RTT_Data\TrainedData";
 		private int UpMargin { get; set; } = 20;
 
 		public TranslatorWindow(MainWindow mw)
@@ -47,13 +45,17 @@ namespace RealTimeTranslator
 
 		private void Translate()
 		{
-			var img = GetScreenShot(this.Left, this.Top, this.Width, this.Height);
-			//DEBUG
-			img.Save(ImgPath, ImageFormat.Jpeg);
-			//MW.MainImage.Source = BitmapToImageConverter.GetBitmapImage(img);
-			var text = GetTextFromImage(ImgPath);
+			var text = GetTextFromScreen();
 			//MessageBox.Show(text);
-			ShowText(text);
+			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(App.AppSettings.Lang3In), App.AppSettings.Lang2Out);
+			ShowText(translated);
+		}
+
+		private string GetTextFromScreen()
+		{
+			var img = GetScreenShot(this.Left, this.Top, this.Width, this.Height);
+			img.Save(App.AppSettings.ImgPath, ImageFormat.Bmp);
+			return GetTextFromImage(App.AppSettings.ImgPath);
 		}
 
 		private Bitmap GetScreenShot(double posX, double posY, double width, double height)
@@ -77,10 +79,50 @@ namespace RealTimeTranslator
 
 		private string GetTextFromImage(string path)
 		{
-			Tesseract tesseract = new Tesseract(TrainedDataFolderPath, Lang, OcrEngineMode.TesseractLstmCombined);
-			tesseract.SetImage(new Image<Bgr, byte>(path));
+			Tesseract tesseract = new Tesseract(App.AppSettings.TrainedDataFolderPath, App.AppSettings.Lang3In, OcrEngineMode.TesseractLstmCombined);
+			//var img = new Image<Rgb, byte>(path);
+			Mat mat = new Mat(path);
+
+			if (App.AppSettings.IsAsIts)
+			{
+				tesseract.SetImage(mat);
+				tesseract.Recognize();
+				return tesseract.GetUTF8Text();
+			}
+
+			Mat dstMat = mat;
+			VectorOfMat matChannels = new VectorOfMat();
+			Mat mat1 = mat;
+			Mat mat2 = mat;
+			//var mat = new Mat(path);
+			//mat.Save(App.AppSettings.TempFolder + "mat.bmp");
+
+			//преобразование цветового пространства (например, из цветного в градации серого)
+			CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
+			dstMat.Save(App.AppSettings.TempFolder + "cvtcolor.bmp");
+
+			//разделение изображения на отдельные цветовые каналы
+			CvInvoke.Split(mat, matChannels);
+
+			//сборка многоцветного изображения из отдельных каналов
+			CvInvoke.Merge(matChannels, mat);
+			mat.Save(App.AppSettings.TempFolder + "merge.bmp");
+
+			////разница между двумя изображениями
+			//CvInvoke.AbsDiff(mat, dstMat, dstMat);
+			//dstMat.Save(App.AppSettings.TempFolder + "diff.bmp");
+
+			//приведение точек, которые темнее/светлее определенного уровня(50) к черному(0) или белому цвету(255)
+			CvInvoke.Threshold(mat, dstMat, MW.ThresholdSlider.Value, 255, ThresholdType.Binary);
+			dstMat.Save(App.AppSettings.TempFolder + "threshold.bmp");
+
+			//CvInvoke.AdaptiveThreshold(dstMat, dstMat, 140, AdaptiveThresholdType.MeanC, ThresholdType.Binary, 3, -30);
+			//dstMat.Save(App.AppSettings.TempFolder + "threshold_ad.bmp");
+
+			tesseract.SetImage(dstMat);
 			tesseract.Recognize();
-			return tesseract.GetUTF8Text().Replace("\n\n", "\n");
+			//return tesseract.GetUTF8Text().Replace("\n\n", "\n");
+			return tesseract.GetUTF8Text();//.Replace('\n', ' ');
 		}
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -93,6 +135,7 @@ namespace RealTimeTranslator
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
+			MW.Close();
 			Close();
 		}
 
@@ -121,5 +164,27 @@ namespace RealTimeTranslator
 			TranslatedTextSV.Visibility = Visibility.Visible;
 			TranslatedTextTB.Text = text;
 		}
+
+		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e)
+		{
+			var text = GetTextFromScreen();
+			ShowText(text);
+		}
+
+		private void LoadImgButton_Click(object sender, RoutedEventArgs e)
+		{
+			var text = GetTextFromImage(App.AppSettings.ImgPath);
+			ShowText(text);
+		}
 	}
 }
+
+//Image<Gray, byte> sobel = img
+//	.Sobel(1, 0, 3)
+//	.AbsDiff(new Gray(0d))
+//	.Convert<Gray, byte>()
+//	.ThresholdBinary(new Gray(100), new Gray(255));
+//Mat SE = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, 
+//	new System.Drawing.Size(10, 1), new System.Drawing.Point(-1, -1));
+//sobel = sobel.MorphologyEx(Emgu.CV.CvEnum.MorphOp.Dilate, SE, new System.Drawing.Point(-1, -1), 
+//	1, Emgu.CV.CvEnum.BorderType.Reflect, new MCvScalar(255));

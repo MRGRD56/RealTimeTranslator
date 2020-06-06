@@ -28,15 +28,15 @@ namespace RealTimeTranslator.Windows
 			InitializeComponent();
 			TWindow = new TranslatorWindow(this);
 			TWindow.Show();
-			//this.Hide();
 			DataContext = this;
 			SetLangs();
+			//this.Hide();
 		}
 
 		private void SetLangs()
 		{
-			var files = System.IO.Directory.GetFiles(TranslatorWindow.TrainedDataFolderPath);
-			Langs = files.ToList().Select(x => 
+			var files = System.IO.Directory.GetFiles(App.AppSettings.TrainedDataFolderPath);
+			Langs = files.ToList().Select(x =>
 			{
 				var name = new System.IO.FileInfo(x).Name;
 				return name.Split(new char[] { '.' })[0];
@@ -45,7 +45,24 @@ namespace RealTimeTranslator.Windows
 
 		private void LangsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			TWindow.Lang = (string)LangsCB.SelectedItem;
+			App.AppSettings.Lang3In = (string)LangsCB.SelectedItem;
+		}
+
+		private void ThresholdSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			App.AppSettings.Threshold = ThresholdSlider.Value;
+		}
+
+		private void FontSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			App.AppSettings.FontSize = e.NewValue;
+			if (TWindow != null)
+				TWindow.TranslatedTextTB.FontSize = e.NewValue;
+		}
+
+		private void IsAsItsCB_CheckedUnckecked(object sender, RoutedEventArgs e)
+		{
+			App.AppSettings.IsAsIts = IsAsItsCB.IsChecked == true ? true : false;
 		}
 	}
 }

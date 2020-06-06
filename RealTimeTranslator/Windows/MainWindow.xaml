@@ -12,6 +12,17 @@
 				<Label Content="Распознаваемый язык: "/>
 				<ComboBox x:Name="LangsCB" ItemsSource="{Binding Path=Langs}" Width="150" SelectionChanged="LangsComboBox_SelectionChanged"/>
 			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Threshold: "/>
+				<Slider x:Name="ThresholdSlider" Minimum="0" Maximum="255" Value="100" Width="150" IsSnapToTickEnabled="True" ValueChanged="ThresholdSlider_ValueChanged"/>
+				<Label Content="{Binding ElementName=ThresholdSlider, Path=Value}"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="FontSize: "/>
+				<Slider x:Name="FontSizeSlider" Minimum="8" Maximum="50" Value="13" Width="150" IsSnapToTickEnabled="True" ValueChanged="FontSizeSlider_ValueChanged"/>
+				<Label Content="{Binding ElementName=FontSizeSlider, Path=Value}"/>
+			</StackPanel>
+			<CheckBox x:Name="IsAsItsCB" Content="Не изменять изображение" Margin="5 0 0 0" Checked="IsAsItsCB_CheckedUnckecked" Unchecked="IsAsItsCB_CheckedUnckecked"/>
 		</StackPanel>
 	</Grid>
 </Window>
