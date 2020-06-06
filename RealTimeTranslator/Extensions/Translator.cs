@@ -57,7 +57,7 @@ namespace RealTimeTranslator.Extensions
 		{
 			"rus" => "ru",
 			"eng" => "en",
-			"jpn" => "jp",
+			"jpn" => "ja",
 			_ => throw new NotImplementedException("Язык задан неверно.")
 		};
 	}

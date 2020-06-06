@@ -23,6 +23,7 @@ using Emgu.CV.Structure;
 using Emgu.Util;
 using RealTimeTranslator.Windows;
 using Emgu.CV.CvEnum;
+using static RealTimeTranslator.Properties.Settings;
 
 namespace RealTimeTranslator
 {
@@ -33,29 +34,35 @@ namespace RealTimeTranslator
 	{
 		private MainWindow MW { get; }
 		private int UpMargin { get; set; } = 20;
+		private string ImgPath { get; } = Default.RttDataDirectory + Default.TempFolder + Default.ImgName;
+		private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
 
 		public TranslatorWindow(MainWindow mw)
 		{
 			InitializeComponent();
 			//this.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 34, 34, 34));
 			MW = mw;
+
+			TranslatedTextTB.FontSize = Default.OutFontSize;
+			TranslatedTextTB.Background = new SolidColorBrush(Default.OutBackground);
 		}
 
 		private void TranslateButton_Click(object sender, RoutedEventArgs e) => Translate();
 
 		private void Translate()
 		{
-			var text = GetTextFromScreen();
+			var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
 			//MessageBox.Show(text);
-			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(App.AppSettings.Lang3In), App.AppSettings.Lang2Out);
+			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
 			ShowText(translated);
 		}
 
 		private string GetTextFromScreen()
 		{
+			
 			var img = GetScreenShot(this.Left, this.Top, this.Width, this.Height);
-			img.Save(App.AppSettings.ImgPath, ImageFormat.Bmp);
-			return GetTextFromImage(App.AppSettings.ImgPath);
+			img.Save(ImgPath, ImageFormat.Bmp);
+			return GetTextFromImage(ImgPath);
 		}
 
 		private Bitmap GetScreenShot(double posX, double posY, double width, double height)
@@ -79,11 +86,11 @@ namespace RealTimeTranslator
 
 		private string GetTextFromImage(string path)
 		{
-			Tesseract tesseract = new Tesseract(App.AppSettings.TrainedDataFolderPath, App.AppSettings.Lang3In, OcrEngineMode.TesseractLstmCombined);
+			Tesseract tesseract = new Tesseract(Default.RttDataDirectory + Default.TrainedDataFolder, Default.Lang3In, OcrEngineMode.TesseractLstmCombined);
 			//var img = new Image<Rgb, byte>(path);
 			Mat mat = new Mat(path);
 
-			if (App.AppSettings.IsAsIts)
+			if (Default.IsAsIts)
 			{
 				tesseract.SetImage(mat);
 				tesseract.Recognize();
@@ -92,21 +99,21 @@ namespace RealTimeTranslator
 
 			Mat dstMat = mat;
 			VectorOfMat matChannels = new VectorOfMat();
-			Mat mat1 = mat;
-			Mat mat2 = mat;
+			//Mat mat1 = mat;
+			//Mat mat2 = mat;
 			//var mat = new Mat(path);
 			//mat.Save(App.AppSettings.TempFolder + "mat.bmp");
 
 			//преобразование цветового пространства (например, из цветного в градации серого)
 			CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
-			dstMat.Save(App.AppSettings.TempFolder + "cvtcolor.bmp");
+			dstMat.Save(TempFolderPath + "cvtcolor.bmp");
 
 			//разделение изображения на отдельные цветовые каналы
 			CvInvoke.Split(mat, matChannels);
 
 			//сборка многоцветного изображения из отдельных каналов
 			CvInvoke.Merge(matChannels, mat);
-			mat.Save(App.AppSettings.TempFolder + "merge.bmp");
+			mat.Save(TempFolderPath + "merge.bmp");
 
 			////разница между двумя изображениями
 			//CvInvoke.AbsDiff(mat, dstMat, dstMat);
@@ -114,7 +121,7 @@ namespace RealTimeTranslator
 
 			//приведение точек, которые темнее/светлее определенного уровня(50) к черному(0) или белому цвету(255)
 			CvInvoke.Threshold(mat, dstMat, MW.ThresholdSlider.Value, 255, ThresholdType.Binary);
-			dstMat.Save(App.AppSettings.TempFolder + "threshold.bmp");
+			dstMat.Save(TempFolderPath + "threshold.bmp");
 
 			//CvInvoke.AdaptiveThreshold(dstMat, dstMat, 140, AdaptiveThresholdType.MeanC, ThresholdType.Binary, 3, -30);
 			//dstMat.Save(App.AppSettings.TempFolder + "threshold_ad.bmp");
@@ -173,7 +180,7 @@ namespace RealTimeTranslator
 
 		private void LoadImgButton_Click(object sender, RoutedEventArgs e)
 		{
-			var text = GetTextFromImage(App.AppSettings.ImgPath);
+			var text = GetTextFromImage(ImgPath);
 			ShowText(text);
 		}
 	}

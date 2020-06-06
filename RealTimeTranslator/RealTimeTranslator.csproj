@@ -91,7 +91,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppSettings.cs" />
     <Compile Include="Extensions\BitmapToImageSourceConverter.cs" />
     <Compile Include="Extensions\Translator.cs" />
     <Compile Include="Windows\TranslatorWindow.xaml.cs">
@@ -134,7 +133,7 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

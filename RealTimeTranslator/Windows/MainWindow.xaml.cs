@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static RealTimeTranslator.Properties.Settings;
 
 namespace RealTimeTranslator.Windows
 {
@@ -31,11 +32,18 @@ namespace RealTimeTranslator.Windows
 			DataContext = this;
 			SetLangs();
 			//this.Hide();
+
+			//Langs3InCB Langs2OutCB ThresholdSlider FontSizeSlider
+			Langs3InCB.SelectedItem = Default.Lang3In;
+			Langs2OutCB.SelectedItem = Langs2OutCB.Items.Cast<ComboBoxItem>().Where(x => x.Content.ToString() == Default.Lang2Out).FirstOrDefault();
+			ThresholdSlider.Value = Default.Threshold;
+			IsAsItsCB.IsChecked = Default.IsAsIts;
+			FontSizeSlider.Value = Default.OutFontSize;
 		}
 
 		private void SetLangs()
 		{
-			var files = System.IO.Directory.GetFiles(App.AppSettings.TrainedDataFolderPath);
+			var files = System.IO.Directory.GetFiles(Default.RttDataDirectory + Default.TrainedDataFolder);
 			Langs = files.ToList().Select(x =>
 			{
 				var name = new System.IO.FileInfo(x).Name;
@@ -43,26 +51,40 @@ namespace RealTimeTranslator.Windows
 			}).ToList();
 		}
 
-		private void LangsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void Langs3InComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			App.AppSettings.Lang3In = (string)LangsCB.SelectedItem;
+			Default.Lang3In = (string)Langs3InCB.SelectedItem;
+			Default.Save();
 		}
 
 		private void ThresholdSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			App.AppSettings.Threshold = ThresholdSlider.Value;
+			Default.Threshold = ThresholdSlider.Value;
+			Default.Save();
 		}
 
 		private void FontSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			App.AppSettings.FontSize = e.NewValue;
-			if (TWindow != null)
-				TWindow.TranslatedTextTB.FontSize = e.NewValue;
+			var val = FontSizeSlider.Value;
+			if (TWindow != null && this != null)
+			{
+				Default.OutFontSize = val;
+				Default.Save();
+				TWindow.TranslatedTextTB.FontSize = val;
+			}
 		}
 
 		private void IsAsItsCB_CheckedUnckecked(object sender, RoutedEventArgs e)
 		{
-			App.AppSettings.IsAsIts = IsAsItsCB.IsChecked == true ? true : false;
+			Default.IsAsIts = IsAsItsCB.IsChecked == true ? true : false;
+			Default.Save();
+		}
+
+		private void Langs2OutComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var item = (ComboBoxItem)Langs2OutCB.SelectedItem;
+			Default.Lang2Out = item.Content.ToString();
+			Default.Save();
 		}
 	}
 }

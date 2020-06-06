@@ -1,7 +1,45 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RealTimeTranslator.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="RttDataDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\RTT_Data\</Value>
+    </Setting>
+    <Setting Name="ImgName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">img.bmp</Value>
+    </Setting>
+    <Setting Name="Lang3In" Type="System.String" Scope="User">
+      <Value Profile="(Default)">eng</Value>
+    </Setting>
+    <Setting Name="Lang2Out" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ru</Value>
+    </Setting>
+    <Setting Name="TempFolder" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Temp\</Value>
+    </Setting>
+    <Setting Name="Threshold" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">70</Value>
+    </Setting>
+    <Setting Name="OutFontSize" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">13</Value>
+    </Setting>
+    <Setting Name="IsAsIts" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OutBackground" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">White</Value>
+    </Setting>
+    <Setting Name="OutForeground" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="ImgPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">img.bmp</Value>
+    </Setting>
+    <Setting Name="TrainedDataFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TrainedData\</Value>
+    </Setting>
+    <Setting Name="IsAtIts" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

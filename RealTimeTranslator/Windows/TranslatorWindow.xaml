@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RealTimeTranslator"
         mc:Ignorable="d"
         Title="TranslatorWindow" Height="100" Width="200" MinHeight="50" MinWidth="70" 
-		Topmost="True" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" KeyDown="Window_KeyDown"
+		Topmost="True" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" KeyDown="Window_KeyDown"
 		Background="Transparent">
 	<WindowChrome.WindowChrome>
 		<WindowChrome ResizeBorderThickness="5" NonClientFrameEdges="None" CaptionHeight="0">
@@ -18,7 +18,7 @@
 	<Grid x:Name="MainGrid">
 		<Grid.Resources>
 			<Style x:Key="ResizeBorder" TargetType="Border">
-				<Setter Property="BorderBrush" Value="#99FF0000"/>
+				<Setter Property="BorderBrush" Value="#50FF0000"/>
 				<Setter Property="Width" Value="15"/>
 				<Setter Property="Height" Value="15"/>
 			</Style>
