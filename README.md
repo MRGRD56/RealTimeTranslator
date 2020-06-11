@@ -26,8 +26,8 @@
 -  Improve text recognition.<br>
 -  Add support for more languages.<br>
 -  Add more thanslators.<br>
--  Add the global keyboard shortcuts.<br>
-- Improve the app design.<br>
+-  Add global keyboard shortcuts.<br>
+-  Improve the app design.<br>
 <hr>
 Before start you need to load necessary models from the repository https://github.com/tesseract-ocr/tessdata and place in a certain folder (by default it's "C:\RTT_Data\TrainedData").
 </details>
