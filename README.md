@@ -19,8 +19,8 @@
   The translator of the recognizable text from the selected area of the screen.  <br>
   At the moment is available: <br>
 -  Recognition of the Russian, English and Japanese text. <br>
--  Перевод распознанного текста.<br>
 -  Translate of the recognized text.<br>
+-  Basic settings.<br>
   In plans:<br>
 -  Add more settings.<br>
 -  Improve text recognition.<br>
