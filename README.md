@@ -15,7 +15,7 @@
 #### Перед запуском нужно загрузить необходимые модели с репозитория https://github.com/tesseract-ocr/tessdata и поместить в определённую папку (по умолчанию "C:\RTT_Data\TrainedData").
 
 <details>
-  <summary>English readme</summary>
+  <summary>English readme (last upd 11.06.20)</summary>
   The translator of the recognizable text from the selected area of the screen.  <br>
   At the moment is available: <br>
 -  Recognition of the Russian, English and Japanese text. <br>
