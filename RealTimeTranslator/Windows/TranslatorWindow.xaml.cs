@@ -95,7 +95,7 @@ namespace RealTimeTranslator
 			{
 				tesseract.SetImage(mat);
 				tesseract.Recognize();
-				return tesseract.GetUTF8Text();
+				return tesseract.GetUTF8Text().Replace("|", "I");
 			}
 
 			Mat dstMat = mat;
@@ -131,7 +131,8 @@ namespace RealTimeTranslator
 			tesseract.Recognize();
 			//return tesseract.GetUTF8Text().Replace("\n\n", "\n");
 			//КОСТЫЛЬ
-			return tesseract.GetUTF8Text().Replace('|', 'I');//.Replace('\n', ' ');
+			var text = tesseract.GetUTF8Text().Replace("|", "I");
+			return text;
 		}
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -160,14 +161,12 @@ namespace RealTimeTranslator
 			//TranslatedTextSV.Visibility = Visibility.Hidden;
 		}
 
-		private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-
-		}
-
 		private void MenuBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			this.DragMove();
+			if (e.ClickCount == 2)
+				Translate();
+			else
+				DragMove();
 		}
 
 		private void AddTextToTTWindow(string origText, string translatedText)
@@ -196,13 +195,13 @@ namespace RealTimeTranslator
 		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e)
 		{
 			var text = GetTextFromScreen();
-			AddTextToTTWindow("= recongition only =", text);
+			AddTextToTTWindow("[recongition only]", text);
 		}
 
 		private void LoadImgButton_Click(object sender, RoutedEventArgs e)
 		{
 			var text = GetTextFromImage(ImgPath);
-			AddTextToTTWindow("= recongition only =", text);
+			AddTextToTTWindow("[recongition only]", text);
 		}
 	}
 }

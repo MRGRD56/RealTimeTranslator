@@ -11,7 +11,7 @@
 		<WindowChrome ResizeBorderThickness="5" NonClientFrameEdges="None" CaptionHeight="0">
 		</WindowChrome>
 	</WindowChrome.WindowChrome>
-	<Grid Background="#90000000">
+	<Grid Background="#D0000000">
 		<ScrollViewer x:Name="TranslatedTextSV" VerticalScrollBarVisibility="Hidden" Margin="10 5">
 			<TextBlock x:Name="TranslatedTextTB" TextWrapping="Wrap" FontSize="16" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">
 				<!--<Run Text="A favorite copy set by writing teachers for their pupils is the following." Foreground="#EAEAEA"/>
