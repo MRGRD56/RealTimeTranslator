@@ -101,6 +101,7 @@
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -123,6 +124,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\BitmapToImageSourceConverter.cs" />
+    <Compile Include="Extensions\GlobalKeyboardHook.cs" />
     <Compile Include="Extensions\Translator.cs" />
     <Compile Include="Windows\TranslatedTextWindow.xaml.cs">
       <DependentUpon>TranslatedTextWindow.xaml</DependentUpon>

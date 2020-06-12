@@ -25,6 +25,9 @@ using RealTimeTranslator.Windows;
 using Emgu.CV.CvEnum;
 using static RealTimeTranslator.Properties.Settings;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System.Windows.Media.Effects;
 
 namespace RealTimeTranslator
 {
@@ -37,15 +40,35 @@ namespace RealTimeTranslator
 		private int UpMargin { get; set; } = 20;
 		private string ImgPath { get; } = Default.RttDataDirectory + Default.TempFolder + Default.ImgName;
 		private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
+		private GlobalKeyboardHook gkhTranslate { get; set; } = new GlobalKeyboardHook();
 
 		public TranslatorWindow(MainWindow mw)
 		{
 			InitializeComponent();
 			//this.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 34, 34, 34));
 			MW = mw;
+			MW.WindowState = WindowState.Minimized;
 
 			//TODO!!!!
 			//MW.TTWindow.TranslatedTextTB.Background = new SolidColorBrush(Default.OutBackground);
+			GlobalKeyHooksRegister();
+		}
+
+		//~TranslatorWindow()
+		//{
+		//	gkhTranslate.KeyDown -= GkhTranslate_KeyDown;
+		//}
+
+		private void GlobalKeyHooksRegister()
+		{
+			gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.Oemtilde);
+			gkhTranslate.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhTranslate_KeyDown); //new System.Windows.Forms.KeyEventHandler
+		}
+
+		private void GkhTranslate_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			Translate();
+			e.Handled = true;
 		}
 
 		private void TranslateButton_Click(object sender, RoutedEventArgs e) => Translate();
@@ -203,6 +226,7 @@ namespace RealTimeTranslator
 			var text = GetTextFromImage(ImgPath);
 			AddTextToTTWindow("[recongition only]", text);
 		}
+
 	}
 }
 
