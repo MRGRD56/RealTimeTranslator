@@ -1,0 +1,28 @@
+﻿<Window x:Class="RealTimeTranslator.Windows.TranslatedTextWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:RealTimeTranslator.Windows"
+		mc:Ignorable="d"
+		Title="TranslatedTextWindow" Height="100" Width="500"
+		Topmost="True" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" Background="Transparent">
+	<WindowChrome.WindowChrome>
+		<WindowChrome ResizeBorderThickness="5" NonClientFrameEdges="None" CaptionHeight="0">
+		</WindowChrome>
+	</WindowChrome.WindowChrome>
+	<Grid Background="#90000000">
+		<ScrollViewer x:Name="TranslatedTextSV" VerticalScrollBarVisibility="Hidden" Margin="10 5">
+			<TextBlock x:Name="TranslatedTextTB" TextWrapping="Wrap" FontSize="16" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">
+				<!--<Run Text="A favorite copy set by writing teachers for their pupils is the following." Foreground="#EAEAEA"/>
+				<LineBreak/>
+				<Run Text="Излюбленная копия, написанная учителями для своих учеников." FontFamily="Segoe UI Semibold" Foreground="#FFFFFF"/>
+				<LineBreak/>
+				<LineBreak/>
+				<Run Text="The quick brown fox jumps over the lazy dog." Foreground="#EAEAEA"/>
+				<LineBreak/>
+				<Run Text="Шустрая бурая лисица прыгает через ленивого пса." FontFamily="Segoe UI Semibold" Foreground="#FFFFFF"/>-->
+			</TextBlock>
+		</ScrollViewer>
+	</Grid>
+</Window>

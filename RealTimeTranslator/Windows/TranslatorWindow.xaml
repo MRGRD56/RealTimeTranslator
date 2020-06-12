@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="TranslatorWindow" Height="100" Width="200" MinHeight="50" MinWidth="70" 
 		Topmost="True" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" KeyDown="Window_KeyDown"
-		Background="Transparent">
+		Background="Transparent" WindowStartupLocation="CenterScreen">
 	<WindowChrome.WindowChrome>
 		<WindowChrome ResizeBorderThickness="5" NonClientFrameEdges="None" CaptionHeight="0">
 		</WindowChrome>
@@ -19,15 +19,15 @@
 		<Grid.Resources>
 			<Style x:Key="ResizeBorder" TargetType="Border">
 				<Setter Property="BorderBrush" Value="#50FF0000"/>
-				<Setter Property="Width" Value="15"/>
-				<Setter Property="Height" Value="15"/>
+				<!--<Setter Property="Width" Value="15"/>
+				<Setter Property="Height" Value="15"/>-->
 			</Style>
 		</Grid.Resources>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-		<Border BorderThickness="1" BorderBrush="Gray" Panel.ZIndex="-10" Visibility="Visible" Grid.RowSpan="2"/>
+		<!--<Border BorderThickness="1" BorderBrush="Gray" Panel.ZIndex="-10" Visibility="Visible" Grid.RowSpan="2"/>-->
 		<Border Background="#f5f5f5" MouseLeftButtonDown="MenuBorder_MouseLeftButtonDown" BorderThickness="1" BorderBrush="Gray">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Panel.ZIndex="150">
 				<StackPanel.Resources>
@@ -37,26 +37,26 @@
 						<Setter Property="Padding" Value="0"/>
 					</Style>
 				</StackPanel.Resources>
-				<Button Click="LoadImgButton_Click" Content="L"/>
+				<Button Click="LoadImgButton_Click" Content="L" ToolTip="Распознать последнюю выделенную область."/>
 				<Button Click="TranslateButton_Click" Content="T"/>
 				<Button Click="RecognizeOnlyButton_Click" Content="R"/>
-				<Button Click="TransparentBackgroundButton_Click" Content="B"/>
+				<!--<Button Click="TransparentBackgroundButton_Click" Content="B"/>-->
 				<!--<Button Click="HidePanelButton_Click" Content="H"/>-->
 				<Button Click="CloseButton_Click" Content="X" Foreground="Red"/>
 			</StackPanel>
 		</Border>
 		<Grid Grid.Row="1">
-			<Border HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="5 5 0 0" Style="{DynamicResource ResizeBorder}"/>
+			<!--<Border HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="5 5 0 0" Style="{DynamicResource ResizeBorder}"/>
 			<Border HorizontalAlignment="Right" VerticalAlignment="Top" BorderThickness="0 5 5 0" Style="{DynamicResource ResizeBorder}"/>
 			<Border HorizontalAlignment="Left" VerticalAlignment="Bottom" BorderThickness="5 0 0 5" Style="{DynamicResource ResizeBorder}"/>
-			<Border HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderThickness="0 0 5 5" Style="{DynamicResource ResizeBorder}"/>
-
+			<Border HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderThickness="0 0 5 5" Style="{DynamicResource ResizeBorder}"/>-->
+			<Border BorderThickness="4" Style="{DynamicResource ResizeBorder}"/>
 			<!--<Border VerticalAlignment="Top" BorderThickness="0 25 0 0" Height="18" Width="30" Style="{DynamicResource ResizeBorder}"/>
 			<Border VerticalAlignment="Bottom" BorderThickness="0 0 0 5" Style="{DynamicResource ResizeBorder}"/>-->
 
-			<ScrollViewer x:Name="TranslatedTextSV" VerticalScrollBarVisibility="Auto" Visibility="Hidden">
+			<!--<ScrollViewer x:Name="TranslatedTextSV" VerticalScrollBarVisibility="Auto" Visibility="Hidden">
 				<TextBlock x:Name="TranslatedTextTB" TextWrapping="Wrap" Background="White" FontSize="12" Panel.ZIndex="10"/>
-			</ScrollViewer>
+			</ScrollViewer>-->
 		</Grid>
 	</Grid>
 </Window>

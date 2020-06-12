@@ -22,6 +22,7 @@ namespace RealTimeTranslator.Windows
 	public partial class MainWindow : Window
 	{
 		private TranslatorWindow TWindow { get; }
+		public TranslatedTextWindow TTWindow { get; }
 		public List<string> Langs { get; set; }
 
 		public MainWindow()
@@ -29,16 +30,24 @@ namespace RealTimeTranslator.Windows
 			InitializeComponent();
 			TWindow = new TranslatorWindow(this);
 			TWindow.Show();
+			TTWindow = new TranslatedTextWindow(this);
+			TTWindow.Show();
 			DataContext = this;
 			SetLangs();
 			//this.Hide();
 
 			//Langs3InCB Langs2OutCB ThresholdSlider FontSizeSlider
 			Langs3InCB.SelectedItem = Default.Lang3In;
-			Langs2OutCB.SelectedItem = Langs2OutCB.Items.Cast<ComboBoxItem>().Where(x => x.Content.ToString() == Default.Lang2Out).FirstOrDefault();
+			//Langs2OutCB.SelectedItem = Langs2OutCB.Items
+			//	.Cast<ComboBoxItem>()
+			//	.Where(x => x.Content.ToString() == Default.Lang2Out)
+			//	.FirstOrDefault();
+			Lang2OutTB.Text = Default.Lang2Out;
 			ThresholdSlider.Value = Default.Threshold;
 			IsAsItsCB.IsChecked = Default.IsAsIts;
 			FontSizeSlider.Value = Default.OutFontSize;
+
+			//UpdateLastImage();
 		}
 
 		private void SetLangs()
@@ -70,7 +79,8 @@ namespace RealTimeTranslator.Windows
 			{
 				Default.OutFontSize = val;
 				Default.Save();
-				TWindow.TranslatedTextTB.FontSize = val;
+				//TODO!!!
+				TTWindow.TranslatedTextTB.FontSize = val;
 			}
 		}
 
@@ -80,11 +90,20 @@ namespace RealTimeTranslator.Windows
 			Default.Save();
 		}
 
-		private void Langs2OutComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void Lang2OutTB_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			var item = (ComboBoxItem)Langs2OutCB.SelectedItem;
-			Default.Lang2Out = item.Content.ToString();
+			var lang = Lang2OutTB.Text;
+			Default.Lang2Out = lang;
 			Default.Save();
 		}
+
+		//public void UpdateLastImage()
+		//{
+		//	BitmapImage img = new BitmapImage();
+		//	img.BeginInit();
+		//	img.UriSource = new Uri(Default.RttDataDirectory + Default.TempFolder + "threshold.bmp");
+		//	img.EndInit(); // Getting the exception here
+		//	LastImage.Source = img;
+		//}
 	}
 }

@@ -24,6 +24,7 @@ using Emgu.Util;
 using RealTimeTranslator.Windows;
 using Emgu.CV.CvEnum;
 using static RealTimeTranslator.Properties.Settings;
+using System.IO;
 
 namespace RealTimeTranslator
 {
@@ -43,8 +44,8 @@ namespace RealTimeTranslator
 			//this.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 34, 34, 34));
 			MW = mw;
 
-			TranslatedTextTB.FontSize = Default.OutFontSize;
-			TranslatedTextTB.Background = new SolidColorBrush(Default.OutBackground);
+			//TODO!!!!
+			//MW.TTWindow.TranslatedTextTB.Background = new SolidColorBrush(Default.OutBackground);
 		}
 
 		private void TranslateButton_Click(object sender, RoutedEventArgs e) => Translate();
@@ -54,12 +55,12 @@ namespace RealTimeTranslator
 			var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
 			//MessageBox.Show(text);
 			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
-			ShowText(translated);
+			AddTextToTTWindow(text, translated);
 		}
 
 		private string GetTextFromScreen()
 		{
-			
+
 			var img = GetScreenShot(this.Left, this.Top, this.Width, this.Height);
 			img.Save(ImgPath, ImageFormat.Bmp);
 			return GetTextFromImage(ImgPath);
@@ -129,7 +130,8 @@ namespace RealTimeTranslator
 			tesseract.SetImage(dstMat);
 			tesseract.Recognize();
 			//return tesseract.GetUTF8Text().Replace("\n\n", "\n");
-			return tesseract.GetUTF8Text();//.Replace('\n', ' ');
+			//КОСТЫЛЬ
+			return tesseract.GetUTF8Text().Replace('|', 'I');//.Replace('\n', ' ');
 		}
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -142,6 +144,7 @@ namespace RealTimeTranslator
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
+			MW.TTWindow.Close();
 			MW.Close();
 			Close();
 		}
@@ -153,7 +156,8 @@ namespace RealTimeTranslator
 
 		private void TransparentBackgroundButton_Click(object sender, RoutedEventArgs e)
 		{
-			TranslatedTextSV.Visibility = Visibility.Hidden;
+			//TODO!!! - to delete!
+			//TranslatedTextSV.Visibility = Visibility.Hidden;
 		}
 
 		private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -166,22 +170,39 @@ namespace RealTimeTranslator
 			this.DragMove();
 		}
 
-		private void ShowText(string text)
+		private void AddTextToTTWindow(string origText, string translatedText)
 		{
-			TranslatedTextSV.Visibility = Visibility.Visible;
-			TranslatedTextTB.Text = text;
+			//TODO!!!
+			//TranslatedTextSV.Visibility = Visibility.Visible;
+			//TranslatedTextTB.Text = text;
+			//<Run Text = "The quick brown fox jumps over the lazy dog." Foreground = "#EAEAEA" />
+			//<LineBreak />
+			//<Run Text = "Шустрая бурая лисица прыгает через ленивого пса." FontFamily = "Segoe UI Semibold" Foreground = "#FFFFFF" />
+			AddInline(new LineBreak());
+			AddInline(new LineBreak());
+			AddInline(new Run { Text = origText, Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEA, 0xEA, 0xEA)) });
+			AddInline(new LineBreak());
+			AddInline(new Run
+			{
+				Text = translatedText,
+				Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF)),
+				FontFamily = new System.Windows.Media.FontFamily("Segoe UI Semibold")
+			});
+			MW.TTWindow.TranslatedTextSV.ScrollToEnd();
 		}
+
+		private void AddInline(Inline item) => MW.TTWindow.TranslatedTextTB.Inlines.Add(item);
 
 		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e)
 		{
 			var text = GetTextFromScreen();
-			ShowText(text);
+			AddTextToTTWindow("= recongition only =", text);
 		}
 
 		private void LoadImgButton_Click(object sender, RoutedEventArgs e)
 		{
 			var text = GetTextFromImage(ImgPath);
-			ShowText(text);
+			AddTextToTTWindow("= recongition only =", text);
 		}
 	}
 }

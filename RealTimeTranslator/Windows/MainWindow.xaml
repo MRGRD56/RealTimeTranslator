@@ -15,11 +15,8 @@
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<Label Content="Язык перевода: " Margin="0 0 39 0"/>
-					<ComboBox x:Name="Langs2OutCB" Width="150" SelectionChanged="Langs2OutComboBox_SelectionChanged">
-						<ComboBoxItem Content="en"/>
-						<ComboBoxItem Content="ja"/>
-						<ComboBoxItem Content="ru"/>
-					</ComboBox>
+					<TextBox x:Name="Lang2OutTB" Width="150" TextChanged="Lang2OutTB_TextChanged" 
+							 ToolTip="Двухбуквенный код языка в соответствии с ISO 639-1" MaxLength="2" FontSize="15"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<Label Content="Threshold: "/>
@@ -33,6 +30,8 @@
 					<Slider x:Name="FontSizeSlider" Minimum="8" Maximum="60" Width="150" IsSnapToTickEnabled="True" ValueChanged="FontSizeSlider_ValueChanged"/>
 					<Label Content="{Binding ElementName=FontSizeSlider, Path=Value}"/>
 				</StackPanel>
+				<!--TODO-->
+				<Image x:Name="LastImage" Stretch="None" Margin="0 20 0 0"/>
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>
