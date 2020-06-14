@@ -38,7 +38,7 @@ namespace RealTimeTranslator.Windows
 			Langs3InCB.SelectedItem = Default.Lang3In;
 			Lang2OutTB.Text = Default.Lang2Out;
 			ThresholdSlider.Value = Default.Threshold;
-			IsAsItsCB.IsChecked = Default.IsAsIts;
+			IsAsItsCB.IsChecked = Default.IsAsIs;
 			FontSizeSlider.Value = Default.OutFontSize;
 		}
 
@@ -77,7 +77,7 @@ namespace RealTimeTranslator.Windows
 
 		private void IsAsItsCB_CheckedUnckecked(object sender, RoutedEventArgs e)
 		{
-			Default.IsAsIts = IsAsItsCB.IsChecked == true ? true : false;
+			Default.IsAsIs = IsAsItsCB.IsChecked == true ? true : false;
 			Default.Save();
 		}
 

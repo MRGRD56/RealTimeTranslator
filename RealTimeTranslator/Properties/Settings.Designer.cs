@@ -101,18 +101,6 @@ namespace RealTimeTranslator.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsAsIts {
-            get {
-                return ((bool)(this["IsAsIts"]));
-            }
-            set {
-                this["IsAsIts"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("img.bmp")]
@@ -137,12 +125,12 @@ namespace RealTimeTranslator.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsAtIts {
+        public bool IsAsIs {
             get {
-                return ((bool)(this["IsAtIts"]));
+                return ((bool)(this["IsAsIs"]));
             }
             set {
-                this["IsAtIts"] = value;
+                this["IsAsIs"] = value;
             }
         }
         

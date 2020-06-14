@@ -115,7 +115,7 @@ namespace RealTimeTranslator
 			//var img = new Image<Rgb, byte>(path);
 			Mat mat = new Mat(path);
 
-			if (Default.IsAsIts)
+			if (Default.IsAsIs)
 			{
 				tesseract.SetImage(mat);
 				tesseract.Recognize();
