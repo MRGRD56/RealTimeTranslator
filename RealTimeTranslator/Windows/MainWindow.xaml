@@ -31,7 +31,7 @@
 					<Label Content="{Binding ElementName=FontSizeSlider, Path=Value}"/>
 				</StackPanel>
 				<!--TODO-->
-				<Image x:Name="LastImage" Stretch="None" Margin="0 20 0 0"/>
+				<!--<Image x:Name="LastImage" Stretch="None" Margin="0 20 0 0"/>-->
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

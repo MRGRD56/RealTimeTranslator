@@ -41,33 +41,35 @@ namespace RealTimeTranslator
 		private string ImgPath { get; } = Default.RttDataDirectory + Default.TempFolder + Default.ImgName;
 		private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
 		private GlobalKeyboardHook gkhTranslate { get; set; } = new GlobalKeyboardHook();
+		private GlobalKeyboardHook gkhRecognizeOnly { get; set; } = new GlobalKeyboardHook();
 
 		public TranslatorWindow(MainWindow mw)
 		{
 			InitializeComponent();
-			//this.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 34, 34, 34));
 			MW = mw;
 			MW.WindowState = WindowState.Minimized;
 
-			//TODO!!!!
-			//MW.TTWindow.TranslatedTextTB.Background = new SolidColorBrush(Default.OutBackground);
 			GlobalKeyHooksRegister();
 		}
-
-		//~TranslatorWindow()
-		//{
-		//	gkhTranslate.KeyDown -= GkhTranslate_KeyDown;
-		//}
 
 		private void GlobalKeyHooksRegister()
 		{
 			gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.Oemtilde);
+			gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.F2);
 			gkhTranslate.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhTranslate_KeyDown); //new System.Windows.Forms.KeyEventHandler
+			gkhRecognizeOnly.HookedKeys.Add(System.Windows.Forms.Keys.F3);
+			gkhRecognizeOnly.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhRecognizeOnly_KeyDown);
 		}
 
 		private void GkhTranslate_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			Translate();
+			e.Handled = true;
+		}
+		
+		private void GkhRecognizeOnly_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			RecognizeOnly();
 			e.Handled = true;
 		}
 
@@ -76,7 +78,6 @@ namespace RealTimeTranslator
 		private void Translate()
 		{
 			var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
-			//MessageBox.Show(text);
 			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
 			AddTextToTTWindow(text, translated);
 		}
@@ -122,26 +123,29 @@ namespace RealTimeTranslator
 			}
 
 			Mat dstMat = mat;
-			VectorOfMat matChannels = new VectorOfMat();
-			//Mat mat1 = mat;
-			//Mat mat2 = mat;
-			//var mat = new Mat(path);
-			//mat.Save(App.AppSettings.TempFolder + "mat.bmp");
+			//VectorOfMat matChannels = new VectorOfMat();
+			////Mat mat1 = mat;
+			////Mat mat2 = mat;
+			////var mat = new Mat(path);
+			////mat.Save(App.AppSettings.TempFolder + "mat.bmp");
 
-			//преобразование цветового пространства (например, из цветного в градации серого)
-			CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
-			dstMat.Save(TempFolderPath + "cvtcolor.bmp");
+			////преобразование цветового пространства (например, из цветного в градации серого)
+			//CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
+			//dstMat.Save(TempFolderPath + "cvtcolor.bmp");
 
-			//разделение изображения на отдельные цветовые каналы
-			CvInvoke.Split(mat, matChannels);
+			////разделение изображения на отдельные цветовые каналы
+			//CvInvoke.Split(mat, matChannels);
 
-			//сборка многоцветного изображения из отдельных каналов
-			CvInvoke.Merge(matChannels, mat);
-			mat.Save(TempFolderPath + "merge.bmp");
+			////сборка многоцветного изображения из отдельных каналов
+			//CvInvoke.Merge(matChannels, mat);
+			//mat.Save(TempFolderPath + "merge.bmp");
 
 			////разница между двумя изображениями
 			//CvInvoke.AbsDiff(mat, dstMat, dstMat);
 			//dstMat.Save(App.AppSettings.TempFolder + "diff.bmp");
+
+			CvInvoke.CvtColor(mat, mat, ColorConversion.Rgb2Gray);
+			mat.Save(TempFolderPath + "gray.bmp");
 
 			//приведение точек, которые темнее/светлее определенного уровня(50) к черному(0) или белому цвету(255)
 			CvInvoke.Threshold(mat, dstMat, MW.ThresholdSlider.Value, 255, ThresholdType.Binary);
@@ -178,12 +182,6 @@ namespace RealTimeTranslator
 			MessageBox.Show("В разработке");
 		}
 
-		private void TransparentBackgroundButton_Click(object sender, RoutedEventArgs e)
-		{
-			//TODO!!! - to delete!
-			//TranslatedTextSV.Visibility = Visibility.Hidden;
-		}
-
 		private void MenuBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			if (e.ClickCount == 2)
@@ -194,12 +192,6 @@ namespace RealTimeTranslator
 
 		private void AddTextToTTWindow(string origText, string translatedText)
 		{
-			//TODO!!!
-			//TranslatedTextSV.Visibility = Visibility.Visible;
-			//TranslatedTextTB.Text = text;
-			//<Run Text = "The quick brown fox jumps over the lazy dog." Foreground = "#EAEAEA" />
-			//<LineBreak />
-			//<Run Text = "Шустрая бурая лисица прыгает через ленивого пса." FontFamily = "Segoe UI Semibold" Foreground = "#FFFFFF" />
 			AddInline(new LineBreak());
 			AddInline(new LineBreak());
 			AddInline(new Run { Text = origText, Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEA, 0xEA, 0xEA)) });
@@ -215,7 +207,9 @@ namespace RealTimeTranslator
 
 		private void AddInline(Inline item) => MW.TTWindow.TranslatedTextTB.Inlines.Add(item);
 
-		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e)
+		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e) => RecognizeOnly();
+
+		private void RecognizeOnly()
 		{
 			var text = GetTextFromScreen();
 			AddTextToTTWindow("[recongition only]", text);

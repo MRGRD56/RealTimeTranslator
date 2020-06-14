@@ -26,20 +26,23 @@
     <Setting Name="IsAsIts" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="OutBackground" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">White</Value>
-    </Setting>
-    <Setting Name="OutForeground" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">Black</Value>
-    </Setting>
     <Setting Name="ImgPath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">img.bmp</Value>
     </Setting>
     <Setting Name="TrainedDataFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">TrainedData\</Value>
     </Setting>
-    <Setting Name="IsAtIts" Type="System.String" Scope="User">
+    <Setting Name="IsAtIts" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoTranslateDelay" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="OutBackground" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFFFFFFF</Value>
+    </Setting>
+    <Setting Name="OutForeground" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF000000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

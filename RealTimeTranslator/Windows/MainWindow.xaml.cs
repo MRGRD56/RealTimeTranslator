@@ -34,20 +34,12 @@ namespace RealTimeTranslator.Windows
 			TTWindow.Show();
 			DataContext = this;
 			SetLangs();
-			//this.Hide();
 
-			//Langs3InCB Langs2OutCB ThresholdSlider FontSizeSlider
 			Langs3InCB.SelectedItem = Default.Lang3In;
-			//Langs2OutCB.SelectedItem = Langs2OutCB.Items
-			//	.Cast<ComboBoxItem>()
-			//	.Where(x => x.Content.ToString() == Default.Lang2Out)
-			//	.FirstOrDefault();
 			Lang2OutTB.Text = Default.Lang2Out;
 			ThresholdSlider.Value = Default.Threshold;
 			IsAsItsCB.IsChecked = Default.IsAsIts;
 			FontSizeSlider.Value = Default.OutFontSize;
-
-			//UpdateLastImage();
 		}
 
 		private void SetLangs()
@@ -79,7 +71,6 @@ namespace RealTimeTranslator.Windows
 			{
 				Default.OutFontSize = val;
 				Default.Save();
-				//TODO!!!
 				TTWindow.TranslatedTextTB.FontSize = val;
 			}
 		}

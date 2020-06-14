@@ -113,30 +113,6 @@ namespace RealTimeTranslator.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("White")]
-        public global::System.Windows.Media.Color OutBackground {
-            get {
-                return ((global::System.Windows.Media.Color)(this["OutBackground"]));
-            }
-            set {
-                this["OutBackground"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
-        public global::System.Windows.Media.Color OutForeground {
-            get {
-                return ((global::System.Windows.Media.Color)(this["OutForeground"]));
-            }
-            set {
-                this["OutForeground"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("img.bmp")]
@@ -161,12 +137,48 @@ namespace RealTimeTranslator.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public string IsAtIts {
+        public bool IsAtIts {
             get {
-                return ((string)(this["IsAtIts"]));
+                return ((bool)(this["IsAtIts"]));
             }
             set {
                 this["IsAtIts"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public double AutoTranslateDelay {
+            get {
+                return ((double)(this["AutoTranslateDelay"]));
+            }
+            set {
+                this["AutoTranslateDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFFFF")]
+        public global::System.Windows.Media.Color OutBackground {
+            get {
+                return ((global::System.Windows.Media.Color)(this["OutBackground"]));
+            }
+            set {
+                this["OutBackground"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF000000")]
+        public global::System.Windows.Media.Color OutForeground {
+            get {
+                return ((global::System.Windows.Media.Color)(this["OutForeground"]));
+            }
+            set {
+                this["OutForeground"] = value;
             }
         }
     }
