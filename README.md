@@ -27,7 +27,7 @@
 
 <details>
   <summary>English readme (last upd 11.06.20) (not full)</summary>
-  The translator of the recognizable text from the selected area of the screen.  <br>
+  A translator of the recognizable text from the selected area of the screen.  <br>
   At the moment is available: <br>
 -  Recognition of the Russian, English and Japanese text. <br>
 -  Translate of the recognized text.<br>
