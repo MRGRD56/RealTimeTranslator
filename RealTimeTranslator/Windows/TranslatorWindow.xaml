@@ -28,7 +28,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<!--<Border BorderThickness="1" BorderBrush="Gray" Panel.ZIndex="-10" Visibility="Visible" Grid.RowSpan="2"/>-->
-		<Border Background="#f5f5f5" MouseLeftButtonDown="MenuBorder_MouseLeftButtonDown" BorderThickness="1" BorderBrush="Gray">
+		<Border Background="#d0f5f5f5" Opacity="0.5" MouseLeftButtonDown="MenuBorder_MouseLeftButtonDown" BorderThickness="1" BorderBrush="Gray">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Panel.ZIndex="150">
 				<StackPanel.Resources>
 					<Style TargetType="Button">
