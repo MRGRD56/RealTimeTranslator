@@ -28,6 +28,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Media.Effects;
+using Path = System.IO.Path;
 
 namespace RealTimeTranslator
 {
@@ -38,7 +39,8 @@ namespace RealTimeTranslator
 	{
 		private MainWindow MW { get; }
 		private int UpMargin { get; set; } = 20;
-		private string ImgPath { get; } = Default.RttDataDirectory + Default.TempFolder + Default.ImgName;
+		private string ImgFolder { get; } = Path.Combine(Default.RttDataDirectory, Default.TempFolder);
+		private string ImgPath => Path.Combine(ImgFolder, Default.ImgName);
 		private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
 		private GlobalKeyboardHook gkhTranslate { get; set; } = new GlobalKeyboardHook();
 		private GlobalKeyboardHook gkhRecognizeOnly { get; set; } = new GlobalKeyboardHook();
@@ -63,7 +65,7 @@ namespace RealTimeTranslator
 
 		private void GkhTranslate_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
-			Translate();
+			TranslateAsync();
 			e.Handled = true;
 		}
 		
@@ -73,24 +75,33 @@ namespace RealTimeTranslator
 			e.Handled = true;
 		}
 
-		private void TranslateButton_Click(object sender, RoutedEventArgs e) => Translate();
+		private void TranslateButton_Click(object sender, RoutedEventArgs e) => TranslateAsync();
 
-		private void Translate()
+		private async void TranslateAsync()
 		{
 			var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
-			var translated = Translator.TranslateTextViaGoogle(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
+			var translated = await Translator.TranslateTextViaGoogleAsync(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
 			AddTextToTTWindow(text, translated);
 		}
 
 		private string GetTextFromScreen()
 		{
+			if (!Directory.Exists(ImgFolder))
+			{
+				Directory.CreateDirectory(ImgFolder);
+			}
+			
+			var source = PresentationSource.FromVisual(this);
+			var transformToDevice = source.CompositionTarget.TransformToDevice;
+			var position = transformToDevice.Transform(new Vector(Left, Top));
+			var size = transformToDevice.Transform(new Vector(Width, Height));
 
-			var img = GetScreenShot(this.Left, this.Top, this.Width, this.Height);
+			var img = GetScreenshot(position.X, position.Y, size.X, size.Y);
 			img.Save(ImgPath, ImageFormat.Bmp);
 			return GetTextFromImage(ImgPath);
 		}
 
-		private Bitmap GetScreenShot(double posX, double posY, double width, double height)
+		private Bitmap GetScreenshot(double posX, double posY, double width, double height)
 		{
 			int posXInt = Convert.ToInt32(posX);
 			int posYInt = Convert.ToInt32(posY) + UpMargin;
@@ -166,7 +177,7 @@ namespace RealTimeTranslator
 		{
 			if (e.Key == Key.F)
 			{
-				Translate();
+				TranslateAsync();
 			}
 		}
 
@@ -185,7 +196,7 @@ namespace RealTimeTranslator
 		private void MenuBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			if (e.ClickCount == 2)
-				Translate();
+				TranslateAsync();
 			else
 				DragMove();
 		}

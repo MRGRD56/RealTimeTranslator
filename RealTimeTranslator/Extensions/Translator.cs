@@ -10,9 +10,9 @@ using System.Web.Script.Serialization;
 
 namespace RealTimeTranslator.Extensions
 {
-	public class Translator
+	public static class Translator
 	{
-		public static string TranslateTextViaGoogle(string input, string lang2In, string lang2Out)
+		public static async Task<string> TranslateTextViaGoogleAsync(string input, string lang2In, string lang2Out)
 		{
 			if (string.IsNullOrWhiteSpace(input))
 			{
@@ -23,7 +23,7 @@ namespace RealTimeTranslator.Extensions
 			("https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}",
 			 lang2In, lang2Out, Uri.EscapeUriString(input));
 			HttpClient httpClient = new HttpClient();
-			string result = httpClient.GetStringAsync(url).Result;
+			string result = await httpClient.GetStringAsync(url);
 
 			// Get all json data
 			var jsonData = new JavaScriptSerializer().Deserialize<List<dynamic>>(result);
