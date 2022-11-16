@@ -29,210 +29,362 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Media.Effects;
 using Path = System.IO.Path;
+using System.Threading;
+using RealTimeTranslator.Utils;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace RealTimeTranslator
 {
-	/// <summary>
-	/// Логика взаимодействия для TranslatorWindow.xaml
-	/// </summary>
-	public partial class TranslatorWindow : Window
-	{
-		private MainWindow MW { get; }
-		private int UpMargin { get; set; } = 20;
-		private string ImgFolder { get; } = Path.Combine(Default.RttDataDirectory, Default.TempFolder);
-		private string ImgPath => Path.Combine(ImgFolder, Default.ImgName);
-		private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
-		private GlobalKeyboardHook gkhTranslate { get; set; } = new GlobalKeyboardHook();
-		private GlobalKeyboardHook gkhRecognizeOnly { get; set; } = new GlobalKeyboardHook();
+    /// <summary>
+    /// Логика взаимодействия для TranslatorWindow.xaml
+    /// </summary>
+    public partial class TranslatorWindow : Window
+    {
+        private MainWindow MW { get; }
+        private int UpMargin { get; set; } = 20;
+        private string ImgFolder { get; } = Path.Combine(Default.RttDataDirectory, Default.TempFolder);
+        private string ImgPath => Path.Combine(ImgFolder, Default.ImgName);
+        private string TempFolderPath { get; } = Default.RttDataDirectory + Default.TempFolder;
+        private GlobalKeyboardHook gkhTranslate { get; set; } = new GlobalKeyboardHook();
+        private GlobalKeyboardHook gkhRecognizeOnly { get; set; } = new GlobalKeyboardHook();
 
-		public TranslatorWindow(MainWindow mw)
-		{
-			InitializeComponent();
-			MW = mw;
-			MW.WindowState = WindowState.Minimized;
+        private readonly ValueRef<bool> _isAutoMode = new ValueRef<bool>(false);
 
-			GlobalKeyHooksRegister();
-		}
+        private bool IsAutoMode
+        {
+            get => _isAutoMode.Value;
+            set
+            {
+                _isAutoMode.Value = value;
+                lock (_isAutoMode)
+                {
+                    Monitor.PulseAll(_isAutoMode);
+                }
+            }
+        }
 
-		private void GlobalKeyHooksRegister()
-		{
-			gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.Oemtilde);
-			gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.F2);
-			gkhTranslate.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhTranslate_KeyDown); //new System.Windows.Forms.KeyEventHandler
-			gkhRecognizeOnly.HookedKeys.Add(System.Windows.Forms.Keys.F3);
-			gkhRecognizeOnly.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhRecognizeOnly_KeyDown);
-		}
+        public TranslatorWindow(MainWindow mw)
+        {
+            InitializeComponent();
+            MW = mw;
+            MW.WindowState = WindowState.Minimized;
 
-		private void GkhTranslate_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			TranslateAsync();
-			e.Handled = true;
-		}
-		
-		private void GkhRecognizeOnly_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			RecognizeOnly();
-			e.Handled = true;
-		}
+            WorkAutoMode();
 
-		private void TranslateButton_Click(object sender, RoutedEventArgs e) => TranslateAsync();
+            GlobalKeyHooksRegister();
+        }
 
-		private async void TranslateAsync()
-		{
-			var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
-			var translated = await Translator.TranslateTextViaGoogleAsync(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
-			AddTextToTTWindow(text, translated);
-		}
+        private void GlobalKeyHooksRegister()
+        {
+            gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.Oemtilde);
+            gkhTranslate.HookedKeys.Add(System.Windows.Forms.Keys.F2);
+            gkhTranslate.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhTranslate_KeyDown); //new System.Windows.Forms.KeyEventHandler
+            gkhRecognizeOnly.HookedKeys.Add(System.Windows.Forms.Keys.F3);
+            gkhRecognizeOnly.KeyDown += new System.Windows.Forms.KeyEventHandler(GkhRecognizeOnly_KeyDown);
+        }
 
-		private string GetTextFromScreen()
-		{
-			if (!Directory.Exists(ImgFolder))
-			{
-				Directory.CreateDirectory(ImgFolder);
-			}
-			
-			var source = PresentationSource.FromVisual(this);
-			var transformToDevice = source.CompositionTarget.TransformToDevice;
-			var position = transformToDevice.Transform(new Vector(Left, Top));
-			var size = transformToDevice.Transform(new Vector(Width, Height));
+        private void GkhTranslate_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            TranslateAsync();
+            e.Handled = true;
+        }
 
-			var img = GetScreenshot(position.X, position.Y, size.X, size.Y);
-			img.Save(ImgPath, ImageFormat.Bmp);
-			return GetTextFromImage(ImgPath);
-		}
+        private void GkhRecognizeOnly_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            RecognizeOnly();
+            e.Handled = true;
+        }
 
-		private Bitmap GetScreenshot(double posX, double posY, double width, double height)
-		{
-			int posXInt = Convert.ToInt32(posX);
-			int posYInt = Convert.ToInt32(posY) + UpMargin;
-			int widthInt = Convert.ToInt32(width);
-			int heightInt = Convert.ToInt32(height) - UpMargin;
-			this.Hide();
-			// 100, 100 размер копируемой области
-			Bitmap screen = new Bitmap(widthInt, heightInt);
-			using (Graphics g = Graphics.FromImage(screen))
-			{
-				// 5, 5 - координаты левого верхнего угла копируемой области
-				g.CopyFromScreen(posXInt, posYInt, 00, 0, screen.Size);
-				//pictureBox1.Image = screen;
-			}
-			this.Show();
-			return screen;
-		}
+        private void TranslateButton_Click(object sender, RoutedEventArgs e) => TranslateAsync();
 
-		private string GetTextFromImage(string path)
-		{
-			Tesseract tesseract = new Tesseract(Default.RttDataDirectory + Default.TrainedDataFolder, Default.Lang3In, OcrEngineMode.TesseractLstmCombined);
-			//var img = new Image<Rgb, byte>(path);
-			Mat mat = new Mat(path);
+        private async void TranslateAsync()
+        {
+            var text = GetTextFromScreen().Replace(Environment.NewLine, " ");
+            var translated = await Translator.TranslateTextViaGoogleAsync(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
+            AddTextToTTWindow(text, translated);
+        }
 
-			if (Default.IsAsIs)
-			{
-				tesseract.SetImage(mat);
-				tesseract.Recognize();
-				return tesseract.GetUTF8Text().Replace("|", "I");
-			}
+        private Bitmap GetTextScreenshot(bool doHide = true)
+        {
+            if (!Directory.Exists(ImgFolder))
+            {
+                Directory.CreateDirectory(ImgFolder);
+            }
 
-			Mat dstMat = mat;
-			//VectorOfMat matChannels = new VectorOfMat();
-			////Mat mat1 = mat;
-			////Mat mat2 = mat;
-			////var mat = new Mat(path);
-			////mat.Save(App.AppSettings.TempFolder + "mat.bmp");
+            Vector? position = null;
+            Vector? size = null;
 
-			////преобразование цветового пространства (например, из цветного в градации серого)
-			//CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
-			//dstMat.Save(TempFolderPath + "cvtcolor.bmp");
+            Dispatcher.Invoke(() =>
+            {
+                var source = PresentationSource.FromVisual(this);
+                var transformToDevice = source.CompositionTarget.TransformToDevice;
+                position = transformToDevice.Transform(new Vector(Left, Top));
+                size = transformToDevice.Transform(new Vector(Width, Height));
+            });
 
-			////разделение изображения на отдельные цветовые каналы
-			//CvInvoke.Split(mat, matChannels);
+            var img = GetScreenshot(position.Value.X, position.Value.Y, size.Value.X, size.Value.Y, doHide);
+            img.Save(ImgPath, ImageFormat.Bmp);
 
-			////сборка многоцветного изображения из отдельных каналов
-			//CvInvoke.Merge(matChannels, mat);
-			//mat.Save(TempFolderPath + "merge.bmp");
+            return img;
+        }
 
-			////разница между двумя изображениями
-			//CvInvoke.AbsDiff(mat, dstMat, dstMat);
-			//dstMat.Save(App.AppSettings.TempFolder + "diff.bmp");
+        private string GetTextFromScreen(bool doHide = true)
+        {
+            var screenshot = GetTextScreenshot(doHide);
 
-			CvInvoke.CvtColor(mat, mat, ColorConversion.Rgb2Gray);
-			mat.Save(TempFolderPath + "gray.bmp");
+            string result = null;
 
-			//приведение точек, которые темнее/светлее определенного уровня(50) к черному(0) или белому цвету(255)
-			CvInvoke.Threshold(mat, dstMat, MW.ThresholdSlider.Value, 255, ThresholdType.Binary);
-			dstMat.Save(TempFolderPath + "threshold.bmp");
+            Dispatcher.Invoke(() => 
+            {
+                result = GetTextFromImage(ImgPath);
+            });
 
-			//CvInvoke.AdaptiveThreshold(dstMat, dstMat, 140, AdaptiveThresholdType.MeanC, ThresholdType.Binary, 3, -30);
-			//dstMat.Save(App.AppSettings.TempFolder + "threshold_ad.bmp");
+            return result;
+        }
 
-			tesseract.SetImage(dstMat);
-			tesseract.Recognize();
-			//return tesseract.GetUTF8Text().Replace("\n\n", "\n");
-			//КОСТЫЛЬ
-			var text = tesseract.GetUTF8Text().Replace("|", "I");
-			return text;
-		}
+        private Bitmap GetScreenshot(double posX, double posY, double width, double height, bool doHide = true)
+        {
+            int posXInt = Convert.ToInt32(posX);
+            int posYInt = Convert.ToInt32(posY) + UpMargin;
+            int widthInt = Convert.ToInt32(width);
+            int heightInt = Convert.ToInt32(height) - UpMargin;
+            if (doHide)
+            {
+                this.Hide();
+            }
+            // 100, 100 размер копируемой области
+            Bitmap screen = new Bitmap(widthInt, heightInt);
+            using (Graphics g = Graphics.FromImage(screen))
+            {
+                // 5, 5 - координаты левого верхнего угла копируемой области
+                g.CopyFromScreen(posXInt, posYInt, 00, 0, screen.Size);
+                //pictureBox1.Image = screen;
+            }
+            if (doHide)
+            {
+                this.Show();
+            }
+            return screen;
+        }
 
-		private void Window_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.F)
-			{
-				TranslateAsync();
-			}
-		}
+        private string GetTextFromImage(string path)
+        {
+            Tesseract tesseract = new Tesseract(Default.RttDataDirectory + Default.TrainedDataFolder, Default.Lang3In, OcrEngineMode.TesseractLstmCombined);
+            //var img = new Image<Rgb, byte>(path);
+            Mat mat = new Mat(path);
 
-		private void CloseButton_Click(object sender, RoutedEventArgs e)
-		{
-			MW.TTWindow.Close();
-			MW.Close();
-			Close();
-		}
+            if (Default.IsAsIs)
+            {
+                tesseract.SetImage(mat);
+                tesseract.Recognize();
+                return tesseract.GetUTF8Text().Replace("|", "I");
+            }
 
-		private void HidePanelButton_Click(object sender, RoutedEventArgs e)
-		{
-			MessageBox.Show("В разработке");
-		}
+            Mat dstMat = mat;
+            //VectorOfMat matChannels = new VectorOfMat();
+            ////Mat mat1 = mat;
+            ////Mat mat2 = mat;
+            ////var mat = new Mat(path);
+            ////mat.Save(App.AppSettings.TempFolder + "mat.bmp");
 
-		private void MenuBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ClickCount == 2)
-				TranslateAsync();
-			else
-				DragMove();
-		}
+            ////преобразование цветового пространства (например, из цветного в градации серого)
+            //CvInvoke.CvtColor(mat, dstMat, ColorConversion.Rgb2Gray);
+            //dstMat.Save(TempFolderPath + "cvtcolor.bmp");
 
-		private void AddTextToTTWindow(string origText, string translatedText)
-		{
-			AddInline(new LineBreak());
-			AddInline(new LineBreak());
-			AddInline(new Run { Text = origText, Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEA, 0xEA, 0xEA)) });
-			AddInline(new LineBreak());
-			AddInline(new Run
-			{
-				Text = translatedText,
-				Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF)),
-				FontFamily = new System.Windows.Media.FontFamily("Segoe UI Semibold")
-			});
-			MW.TTWindow.TranslatedTextSV.ScrollToEnd();
-		}
+            ////разделение изображения на отдельные цветовые каналы
+            //CvInvoke.Split(mat, matChannels);
 
-		private void AddInline(Inline item) => MW.TTWindow.TranslatedTextTB.Inlines.Add(item);
+            ////сборка многоцветного изображения из отдельных каналов
+            //CvInvoke.Merge(matChannels, mat);
+            //mat.Save(TempFolderPath + "merge.bmp");
 
-		private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e) => RecognizeOnly();
+            ////разница между двумя изображениями
+            //CvInvoke.AbsDiff(mat, dstMat, dstMat);
+            //dstMat.Save(App.AppSettings.TempFolder + "diff.bmp");
 
-		private void RecognizeOnly()
-		{
-			var text = GetTextFromScreen();
-			AddTextToTTWindow("[recongition only]", text);
-		}
+            CvInvoke.CvtColor(mat, mat, ColorConversion.Rgb2Gray);
+            mat.Save(TempFolderPath + "gray.bmp");
 
-		private void LoadImgButton_Click(object sender, RoutedEventArgs e)
-		{
-			var text = GetTextFromImage(ImgPath);
-			AddTextToTTWindow("[recongition only]", text);
-		}
+            //приведение точек, которые темнее/светлее определенного уровня(50) к черному(0) или белому цвету(255)
+            CvInvoke.Threshold(mat, dstMat, MW.ThresholdSlider.Value, 255, ThresholdType.Binary);
+            dstMat.Save(TempFolderPath + "threshold.bmp");
 
-	}
+            //CvInvoke.AdaptiveThreshold(dstMat, dstMat, 140, AdaptiveThresholdType.MeanC, ThresholdType.Binary, 3, -30);
+            //dstMat.Save(App.AppSettings.TempFolder + "threshold_ad.bmp");
+
+            tesseract.SetImage(dstMat);
+            tesseract.Recognize();
+            //return tesseract.GetUTF8Text().Replace("\n\n", "\n");
+            //КОСТЫЛЬ
+            var text = tesseract.GetUTF8Text().Replace("|", "I");
+            return text;
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F)
+            {
+                TranslateAsync();
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            MW.TTWindow.Close();
+            MW.Close();
+            Close();
+        }
+
+        private void HidePanelButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("В разработке");
+        }
+
+        private void MenuBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+                TranslateAsync();
+            else
+                DragMove();
+        }
+
+        private void AddTextToTTWindow(string origText, string translatedText)
+        {
+            AddInline(new LineBreak());
+            AddInline(new LineBreak());
+            AddInline(new Run { Text = origText, Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEA, 0xEA, 0xEA)) });
+            AddInline(new LineBreak());
+            AddInline(new Run
+            {
+                Text = translatedText,
+                Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF)),
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI Semibold")
+            });
+            MW.TTWindow.TranslatedTextSV.ScrollToEnd();
+        }
+
+        private void AddInline(Inline item) => MW.TTWindow.TranslatedTextTB.Inlines.Add(item);
+
+        private void RecognizeOnlyButton_Click(object sender, RoutedEventArgs e) => RecognizeOnly();
+
+        private void RecognizeOnly()
+        {
+            var text = GetTextFromScreen();
+            AddTextToTTWindow("[recongition only]", text);
+        }
+
+        private void LoadImgButton_Click(object sender, RoutedEventArgs e)
+        {
+            var text = GetTextFromImage(ImgPath);
+            AddTextToTTWindow("[recongition only]", text);
+        }
+
+        private void AutoModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+
+            IsAutoMode = !IsAutoMode;
+            if (IsAutoMode)
+            {
+                button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xf4, 0x43, 0x36));
+                button.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                button.ClearValue(Control.BackgroundProperty);
+                button.ClearValue(Control.FontWeightProperty);
+            }
+        }
+
+        private async void WorkAutoMode()
+        {
+            Bitmap lastScreenshot = null;
+            string lastText = null;
+
+            await Task.Run(async () =>
+            {
+                while (true)
+                {
+                    if (!IsAutoMode)
+                    {
+                        lock (_isAutoMode)
+                        {
+                            Monitor.Wait(_isAutoMode);
+                        }
+                        continue;
+                    }
+
+                    var screenshot = GetTextScreenshot(false);
+                    var previousScreenshot = lastScreenshot;
+                    lastScreenshot = screenshot;
+
+                    if (screenshot != null) 
+                    {
+                        string text = null;
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            text = GetTextFromImage(ImgPath);
+                        });
+
+                        var previousText = lastText;
+                        lastText = text;
+
+                        if (!string.IsNullOrEmpty(text) && text != previousText)
+                        {
+                            var translated = await Translator.TranslateTextViaGoogleAsync(text, Translator.ConvertLang3To2(Default.Lang3In), Default.Lang2Out);
+                            Dispatcher.Invoke(() => AddTextToTTWindow(text, translated));
+                        }
+                    }
+
+                    await Task.Delay(800);
+                }
+            });
+        }
+
+        //[DllImport("msvcrt.dll")]
+        //private static extern int memcmp(IntPtr b1, IntPtr b2, long count);
+
+        public static bool CompareBitmaps(Bitmap bmp1, Bitmap bmp2)
+        {
+            if (bmp1 == null)
+            {
+                return bmp2 == null;
+            }
+            else if (bmp2 == null)
+            {
+                return false;
+            }
+
+            Rectangle rect = new Rectangle(0, 0, bmp1.Width, bmp1.Height);
+            BitmapData bmpData1 = bmp1.LockBits(rect, ImageLockMode.ReadOnly, bmp1.PixelFormat);
+            BitmapData bmpData2 = bmp2.LockBits(rect, ImageLockMode.ReadOnly, bmp2.PixelFormat);
+            unsafe
+            {
+                byte* ptr1 = (byte*)bmpData1.Scan0.ToPointer();
+                byte* ptr2 = (byte*)bmpData2.Scan0.ToPointer();
+                int width = rect.Width * 3; // for 24bpp pixel data
+                for (int y = 0; y < rect.Height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        if (*ptr1 != *ptr2)
+                        {
+                            return false;
+                        }
+                        ptr1++;
+                        ptr2++;
+                    }
+                    ptr1 += bmpData1.Stride - width;
+                    ptr2 += bmpData2.Stride - width;
+                }
+            }
+            bmp1.UnlockBits(bmpData1);
+            bmp2.UnlockBits(bmpData2);
+
+            return true;
+        }
+    }
 }
 
 //Image<Gray, byte> sobel = img

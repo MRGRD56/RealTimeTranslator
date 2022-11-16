@@ -9,7 +9,7 @@
 		Topmost="True" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" KeyDown="Window_KeyDown"
 		Background="Transparent" WindowStartupLocation="CenterScreen">
 	<WindowChrome.WindowChrome>
-		<WindowChrome ResizeBorderThickness="5" NonClientFrameEdges="None" CaptionHeight="0">
+		<WindowChrome ResizeBorderThickness="8 4 8 8" NonClientFrameEdges="None" CaptionHeight="0">
 		</WindowChrome>
 	</WindowChrome.WindowChrome>
 	<Window.Resources>
@@ -37,7 +37,8 @@
 						<Setter Property="Padding" Value="0"/>
 					</Style>
 				</StackPanel.Resources>
-				<Button Click="LoadImgButton_Click" Content="L" ToolTip="Распознать последнюю выделенную область."/>
+                <Button Click="AutoModeButton_Click" Content="A"/>
+                <Button Click="LoadImgButton_Click" Content="L" ToolTip="Распознать последнюю выделенную область."/>
 				<Button Click="TranslateButton_Click" Content="T"/>
 				<Button Click="RecognizeOnlyButton_Click" Content="R"/>
 				<!--<Button Click="TransparentBackgroundButton_Click" Content="B"/>-->
@@ -50,7 +51,9 @@
 			<Border HorizontalAlignment="Right" VerticalAlignment="Top" BorderThickness="0 5 5 0" Style="{DynamicResource ResizeBorder}"/>
 			<Border HorizontalAlignment="Left" VerticalAlignment="Bottom" BorderThickness="5 0 0 5" Style="{DynamicResource ResizeBorder}"/>
 			<Border HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderThickness="0 0 5 5" Style="{DynamicResource ResizeBorder}"/>-->
-			<Border BorderThickness="4" Style="{DynamicResource ResizeBorder}"/>
+            <Border BorderThickness="2" Style="{DynamicResource ResizeBorder}">
+                <Border BorderThickness="6 0 6 6" BorderBrush="#01000000" IsHitTestVisible="False" Opacity="0.6"/>
+            </Border>
 			<!--<Border VerticalAlignment="Top" BorderThickness="0 25 0 0" Height="18" Width="30" Style="{DynamicResource ResizeBorder}"/>
 			<Border VerticalAlignment="Bottom" BorderThickness="0 0 0 5" Style="{DynamicResource ResizeBorder}"/>-->
 
