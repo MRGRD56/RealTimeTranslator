@@ -15,6 +15,8 @@
 Before running the app you have to download neccessary trained models from this repository https://github.com/tesseract-ocr/tessdata and place them in a specific folder (`C:\RTT_Data\TrainedData` by default).  
 For now **only** 3 languages are supported for recognition. _(it's pretty easy to fix but I'm too lazy for it~)_
 
+After installing the trained models you should <a href="https://github.com/MRGRD56/RealTimeTranslator/releases">download the latest release</a>, unzip the archive and run `RealTimeTranslator.exe`.
+
 ### Usage
 
 #### Main window
