@@ -41,4 +41,5 @@ You can resize and move it however and wherever you want. You can scroll this wi
 
 _(yes it looks ugly and is not completely in English yet)_
 
+This window is minimized by default.  
 There is the "Threshold" setting which is one of the main settings. You have to adjust this value manually for better recognition. Learn more here: https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html
