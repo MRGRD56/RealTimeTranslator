@@ -1,44 +1,48 @@
 # RealTimeTranslator
-##### Переводчик распознаваемого текста с выделенной области экрана.  
-### На данный момент имеется:
-- ##### Распознавание русского, английского и японского текста.
-- ##### Перевод распознанного текста.
-- ##### Базовые настройки.
-### В планах:
-- ##### Добавить больше настроек.
-- ##### Улучшить распознавание текста.
-- ##### Добавить поддержку большего количества языков.
-- ##### Добавить перевод по таймеру.
-- ##### Добавить больше переводчиков.
-- ##### Добавить глобальные сочетания клавиш. (частично реализовано)
-- ##### Улучшить дизайн приложения.
----
-#### Перед запуском нужно загрузить необходимые модели с репозитория https://github.com/tesseract-ocr/tessdata и поместить в определённую папку (по умолчанию "C:\RTT_Data\TrainedData").
+### Screen text translator `alpha` 
+
+<!-- ![image](https://user-images.githubusercontent.com/35491968/202774868-cf49cf39-bd54-468e-a01e-df46ec8e8b1a.png) -->
+![image](https://user-images.githubusercontent.com/35491968/202775116-b17ab47e-7e63-4c42-aa2f-5f0a6416284b.png)
+
+### Now supports:
+- Recognition of Russian, English and Japanese text;
+- Recognized text translation via Google Translate;
+- Automatic and manual translation;
+- History of translations;
+- Basic settings: languages, recognition settings, UI.
+
+### Installation
+Before running the app you have to download neccessary trained models from this repository https://github.com/tesseract-ocr/tessdata and place them in a specific folder (`C:\RTT_Data\TrainedData` by default).  
+For now **only** 3 languages are supported for recognition. _(it's pretty easy to fix but I'm too lazy for it~)_
+
+### Usage
+There are 3 windows.
+
+#### Main window
+![image](https://user-images.githubusercontent.com/35491968/202778601-b45f75d3-9c20-4a54-b3b2-fe3d32d1846e.png)
+
+You have to put this window around the text you want to be translated, like on the screenshot above.
+
+The buttons mean:
+- `A` - Auto mode (automatically translates the selected text when it changes);
+- `L` - Recognize the last recognized area _(used for debug)_
+- `T` - Translate the selected area manually;
+- `R` - Only recognize the selected area (like `T` but without translating);
+- `X` - Exit the app.
+
+#### Translated text window
+
+
+
+There is a settings window with "Threshold" setting which is one of the main settings. You have to adjust this value manually for better recognition. Read more here: https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html
+
 ---
 
-### Описание функций. 
+### Описание функций  
 ###### (квадратными скобками обозначены кнопки в главном окне)
 #### [L] - распознать текст на последней выделенной области (функция будет убрана или доработана).
 #### [T] - перевести текст с выделенной области
 #### [R] - распознать текст с выделенной области (без перевода)
 #### [ X ] - выход из программы
 #### Двойной клик по заголовку - действия, аналогичные нажатию на [T]
-#### Клавиша ~ (тильда) - аналогично [T] (работает криво)
-
-<details>
-  <summary>English readme (last upd 11.06.20) (not full)</summary>
-  A translator of the recognizable text from the selected area of the screen.  <br>
-  At the moment is available: <br>
--  Recognition of the Russian, English and Japanese text. <br>
--  Translate of the recognized text.<br>
--  Basic settings.<br>
-  In plans:<br>
--  Add more settings.<br>
--  Improve text recognition.<br>
--  Add support for more languages.<br>
--  Add more thanslators.<br>
--  Add global keyboard shortcuts.<br>
--  Improve the app design.<br>
-<hr>
-Before start you need to load necessary models from the repository https://github.com/tesseract-ocr/tessdata and place in a certain folder (by default it's "C:\RTT_Data\TrainedData").
-</details>
+#### Клавиша ~ (тильда) - аналогично [T]
