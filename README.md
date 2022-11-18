@@ -34,7 +34,7 @@ Also you can manually translate the selected text by pressing `~` on your keyboa
 #### Translated text window
 ![image](https://user-images.githubusercontent.com/35491968/202781158-a8f7a560-5609-416a-a249-16584900cb63.png)
 
-You can resize and move it however and whenever you want. You can scroll this window to see the old translated text. The original (recognized) and the translated text are displayed.
+You can resize and move it however and wherever you want. You can scroll this window to see the old translated text. The original (recognized) and the translated text are displayed.
 
 #### Settings window
 ![image](https://user-images.githubusercontent.com/35491968/202781828-8079f358-c184-4a92-86fb-0d5697a158cd.png)
