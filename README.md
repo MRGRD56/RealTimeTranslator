@@ -16,7 +16,6 @@ Before running the app you have to download neccessary trained models from this 
 For now **only** 3 languages are supported for recognition. _(it's pretty easy to fix but I'm too lazy for it~)_
 
 ### Usage
-There are 3 windows.
 
 #### Main window
 ![image](https://user-images.githubusercontent.com/35491968/202778601-b45f75d3-9c20-4a54-b3b2-fe3d32d1846e.png)
@@ -30,19 +29,16 @@ The buttons mean:
 - `R` - Only recognize the selected area (like `T` but without translating);
 - `X` - Exit the app.
 
+Also you can manually translate the selected text by pressing `~` on your keyboard or double clicking the title of the main window. 
+
 #### Translated text window
+![image](https://user-images.githubusercontent.com/35491968/202781158-a8f7a560-5609-416a-a249-16584900cb63.png)
 
+You can resize and move it however and whenever you want. You can scroll this window to see the old translated text. The original (recognized) and the translated text are displayed.
 
+#### Settings window
+![image](https://user-images.githubusercontent.com/35491968/202781828-8079f358-c184-4a92-86fb-0d5697a158cd.png)
 
-There is a settings window with "Threshold" setting which is one of the main settings. You have to adjust this value manually for better recognition. Read more here: https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html
+_(yes it looks ugly and is not completely in English yet)_
 
----
-
-### Описание функций  
-###### (квадратными скобками обозначены кнопки в главном окне)
-#### [L] - распознать текст на последней выделенной области (функция будет убрана или доработана).
-#### [T] - перевести текст с выделенной области
-#### [R] - распознать текст с выделенной области (без перевода)
-#### [ X ] - выход из программы
-#### Двойной клик по заголовку - действия, аналогичные нажатию на [T]
-#### Клавиша ~ (тильда) - аналогично [T]
+There is the "Threshold" setting which is one of the main settings. You have to adjust this value manually for better recognition. Learn more here: https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html
