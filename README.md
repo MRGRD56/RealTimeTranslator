@@ -23,10 +23,10 @@ For now **only** 3 languages are supported for recognition. _(it's pretty easy t
 You have to put this window around the text you want to be translated, like on the screenshot above.
 
 The buttons mean:
-- `A` - Auto mode (automatically translates the selected text when it changes);
-- `L` - Recognize the last recognized area _(used for debug)_
-- `T` - Translate the selected area manually;
-- `R` - Only recognize the selected area (like `T` but without translating);
+- `A` - <ins>A</ins>uto mode (automatically translates the selected text when it changes);
+- `L` - Recognize the <ins>l</ins>ast recognized area _(used for debug)_
+- `T` - <ins>T</ins>ranslate the selected area manually;
+- `R` - Only <ins>r</ins>ecognize the selected area (like `T` but without translating);
 - `X` - Exit the app.
 
 Also you can manually translate the selected text by pressing `~` on your keyboard or double clicking the title of the main window. 
